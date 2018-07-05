@@ -8,7 +8,7 @@ class GenParticle
 public:
 
   GenParticle();
-  GenParticle(int px, int py, int pz, int e, int id, int id_mom, int status, bool isPrompt, bool isHard);
+  GenParticle(double px, double py, double pz, double e, int id, int id_mom, int status, bool isPrompt, bool isHard);
 
   TLorentzVector P4() {return p4_;}
   int ID() {return id_;}
@@ -20,6 +20,10 @@ public:
   void SetIso(double iso) {iso_ = iso;} 
   void SetFrixioneIso(bool passFrixioneIso) {passFrixioneIso_ = passFrixioneIso;}
   void SetSmallestDr(double smallestDr) {smallestDr_ = smallestDr;}
+
+  double GetIso() {return iso_;}
+  bool GetFrixioneIso() {return passFrixioneIso_;}
+  double GetSmallestDr() {return smallestDr_;}
  
   // two vectors saving (1-cosDelta)/(1-cosDelta_0) and sumEt/Photon eta for various Delta within Delta_0
 
@@ -43,7 +47,7 @@ private:
 
 GenParticle::GenParticle() {}
 
-GenParticle::GenParticle(int px, int py, int pz, int e, int id, int id_mom, int status, bool isPrompt, bool isHard)
+GenParticle::GenParticle(double px, double py, double pz, double e, int id, int id_mom, int status, bool isPrompt, bool isHard)
 {
 
  id_ = id; id_mom_ = id_mom; status_ = status;
@@ -51,6 +55,7 @@ GenParticle::GenParticle(int px, int py, int pz, int e, int id, int id_mom, int 
 
  p4_.SetPxPyPzE(px,py,pz,e);
 
+// if (p4_.Pt() == 0) cout << "px: " << px << ", py: " << py << ", pz: " << pz << ", e: " << e << ", status: " << status << endl;
 }
 
 GenParticle::~GenParticle() {}

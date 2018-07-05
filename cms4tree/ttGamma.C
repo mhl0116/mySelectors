@@ -76,19 +76,49 @@ Bool_t ttGamma::Process(Long64_t entry)
    vector<GenParticle> genPhotons_s1, genLeptons_s1, genHadrons_s1;
    vector<GenParticle> genPhotons_prompt, genLeptons_prompt, genHadrons_prompt;
    vector<GenParticle> genPhotons_hard, genLeptons_hard, genHadrons_hard;
+   vector<GenParticle> genPhotons_s22_23, genLeptons_s22_23, genHadrons_s22_23;
 
-   // 1, status1; 2, prompt; 3, hardProcess
+   // 1, status1;
+   // 2, prompt;
+   // 3, hardProcess
+   // 4, status 22 or 23
    LoadGenParticles(genPhotons_s1, genLeptons_s1, genHadrons_s1, 1);
    LoadGenParticles(genPhotons_prompt, genLeptons_prompt, genHadrons_prompt, 2);
    LoadGenParticles(genPhotons_hard, genLeptons_hard, genHadrons_hard, 3);
-   //cout << "nGen: " << genPhotons.size() << ", " << genLeptons.size() << ", " << genHadrons.size() << endl;
+   LoadGenParticles(genPhotons_s22_23, genLeptons_s22_23, genHadrons_s22_23, 4);
 
-   nPromptPhoton->Fill(nPromptPho);
-   nPromptPhoton_iso->Fill(nPromptPhoIso);
-   nHardProcessPhoton->Fill(nHardProcessPho);
-   nPromptPhotonFromHardProcess->Fill(nPromptPhoFromHardPro);
-   nPromptPhotonFromHardProcess_notFromPho->Fill(nPromptPhoFromHardPro_notFromPho);
-   nPromptPhoton_notFromPho->Fill(nPromptPho_notFromPho);
+   SetVals(genPhotons_s1, genLeptons_s1, genHadrons_s1, 0.3, 0.05);
+   SetVals(genPhotons_prompt, genLeptons_prompt, genHadrons_prompt, 0.3, 0.05);
+   SetVals(genPhotons_hard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);
+   SetVals(genPhotons_s22_23, genLeptons_s22_23, genHadrons_s22_23, 0.3, 0.05);
+
+   //return kTRUE;
+
+   if (genPhotons_hard.size() > 0)
+      {
+      GenParticle tmp = genPhotons_hard[0];
+      TLorentzVector tmpp4 = tmp.P4();
+      //      cout << "pt: " << tmpp4.Pt() << ", eta: " << tmpp4.Eta() << ", phi: " << tmpp4.Phi() << ", et: " << tmpp4.Et() << endl;
+   
+      //      cout << "nHardGenPho: " << genPhotons_hard.size() << ", iso: " << genPhotons_hard[0].GetIso()
+      //           << ", passFrix: " << genPhotons_hard[0].GetFrixioneIso() << ", smallestDr: "
+      //           << genPhotons_hard[0].GetSmallestDr() << endl;
+      if (tmp.GetSmallestDr() < 0.05) cout << "genPhotons_hard[0].GetSmallestDr(): " << genPhotons_hard[0].GetSmallestDr() << endl;           
+      }
+      //cout << "nGen: " << genPhotons.size() << ", " << genLeptons.size() << ", " << genHadrons.size() << endl;
+
+   nPhoton_s1->Fill(genPhotons_s1.size()); nPhoton_prompt->Fill(genPhotons_prompt.size()); nPhoton_hard->Fill(genPhotons_hard.size());
+   nLepton_s1->Fill(genLeptons_s1.size()); nLepton_prompt->Fill(genLeptons_prompt.size()); nLepton_hard->Fill(genLeptons_hard.size());
+   nHadron_s1->Fill(genHadrons_s1.size()); nHadron_prompt->Fill(genHadrons_prompt.size()); nHadron_hard->Fill(genHadrons_hard.size());
+
+   nPhoton_s22_23->Fill(genPhotons_s22_23.size());
+   nLepton_s22_23->Fill(genLeptons_s22_23.size());
+   nHadron_s22_23->Fill(genHadrons_s22_23.size());
+
+   FillSimplePhotonVar(genPhotons_s1, pTPhoton_s1, etaPhoton_s1, phiPhoton_s1, isoPhoton_s1, minDrPhoton_s1, minDrPhoton_passFrix_s1, isoPhoton_passFrix_s1);
+   FillSimplePhotonVar(genPhotons_prompt, pTPhoton_prompt, etaPhoton_prompt, phiPhoton_prompt, isoPhoton_prompt, minDrPhoton_prompt, minDrPhoton_passFrix_prompt, isoPhoton_passFrix_prompt);
+   FillSimplePhotonVar(genPhotons_hard, pTPhoton_hard, etaPhoton_hard, phiPhoton_hard, isoPhoton_hard, minDrPhoton_hard, minDrPhoton_passFrix_hard, isoPhoton_passFrix_hard);
+   FillSimplePhotonVar(genPhotons_s22_23, pTPhoton_s22_23, etaPhoton_s22_23, phiPhoton_s22_23, isoPhoton_s22_23, minDrPhoton_s22_23, minDrPhoton_passFrix_s22_23, isoPhoton_passFrix_s22_23);
 
    return kTRUE;
 }
@@ -110,18 +140,51 @@ void ttGamma::Terminate()
    outputRootFile = new TFile("tmp.root","RECREATE");
    outputRootFile->cd();
 
-   nPromptPhoton->Write();
-   nPromptPhoton_iso->Write();
-   nHardProcessPhoton->Write();
-   nPromptPhotonFromHardProcess->Write();
-   nPromptPhotonFromHardProcess_notFromPho->Write();
-   nPromptPhoton_notFromPho->Write();
+   nPhoton_s1->Write();
+   nPhoton_prompt->Write();
+   nPhoton_hard->Write();
+   nLepton_s1->Write();
+   nLepton_prompt->Write();
+   nLepton_hard->Write();
+   nHadron_s1->Write();
+   nHadron_prompt->Write();
+   nHadron_hard->Write();
 
-   nGenParticle->Write();
-   nGenParticle_stat1->Write();
-   nGenParticle_stat22_23->Write();
-   nGenParticle_hardProcess->Write();
+   nPhoton_s22_23->Write();
+   nLepton_s22_23->Write(); 
+   nHadron_s22_23->Write(); 
 
+   pTPhoton_s1->Write();
+   etaPhoton_s1->Write();
+   phiPhoton_s1->Write();
+   isoPhoton_s1->Write();
+   minDrPhoton_s1->Write();
+   minDrPhoton_passFrix_s1->Write();
+   isoPhoton_passFrix_s1->Write();
+
+   pTPhoton_prompt->Write();
+   etaPhoton_prompt->Write();
+   phiPhoton_prompt->Write();
+   isoPhoton_prompt->Write();
+   minDrPhoton_prompt->Write();
+   minDrPhoton_passFrix_prompt->Write();
+   isoPhoton_passFrix_prompt->Write();
+
+   pTPhoton_hard->Write();
+   etaPhoton_hard->Write();
+   phiPhoton_hard->Write();
+   isoPhoton_hard->Write();
+   minDrPhoton_hard->Write();
+   minDrPhoton_passFrix_hard->Write();
+   isoPhoton_passFrix_hard->Write();
+
+   pTPhoton_s22_23->Write();
+   etaPhoton_s22_23->Write();
+   phiPhoton_s22_23->Write();
+   isoPhoton_s22_23->Write();
+   minDrPhoton_s22_23->Write();
+   minDrPhoton_passFrix_s22_23->Write();
+   isoPhoton_passFrix_s22_23->Write();
 
    outputRootFile->Close();
 
@@ -143,14 +206,17 @@ void ttGamma::LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& le
        bool isPrompt = (*bools_genMaker_genpsIsPromptFinalState_CMS3_obj)[i];
        bool isHardProcess = (*bools_genMaker_genpsIsHardProcess_CMS3_obj)[i];
 
-       GenParticle tmpGenP = GenParticle(genP1,genP2,genP3,genP4,genID,simpleMomId,genStatus,isPrompt,isHardProcess);
-
        //genCat:
-       //1, status1; 2, prompt; 3, hardProcess
+       //1, status1; 2, prompt; 3, hardProcess, 4, status22or23
    
        if (genCat == 1 && genStatus != 1) continue;
+       //if (genP1 == 0 && genP2 == 0) cout << "checkStatus: " << genStatus << ", genCat: " << genCat << endl;
        if (genCat == 2 && !isPrompt) continue;
        if (genCat == 3 && !isHardProcess) continue;
+       if (genCat == 4 && !(genStatus == 22 || genStatus == 23)) continue;
+
+       //cout << genP1 << "," << genP2 << "," << genP3 << "," << genP4 << "," << genID << "," << simpleMomId << "," << genStatus << endl;
+       GenParticle tmpGenP = GenParticle(genP1,genP2,genP3,genP4,genID,simpleMomId,genStatus,isPrompt,isHardProcess);
 
        if (genID == 22) pho.push_back(tmpGenP);
        if (abs(genID) == 11 || abs(genID) == 13 || abs(genID) == 15) lep.push_back(tmpGenP);
@@ -163,14 +229,17 @@ void ttGamma::LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& le
 void ttGamma::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, vector<GenParticle> gp_cat3, double cone_iso, double cone_frix)
 {
 
-   const int nBinsForFrix = 10;
-   const double initConeFrix = 0.0001;
+   const int nBinsForFrix = 100;
+   const double initConeFrix = 0.001;
    vector<GenParticle> tmpGP; tmpGP.clear();
    tmpGP.insert(tmpGP.end(), gp_cat1.begin(), gp_cat1.end());
    tmpGP.insert(tmpGP.end(), gp_cat2.begin(), gp_cat2.end());
    tmpGP.insert(tmpGP.end(), gp_cat3.begin(), gp_cat3.end());
 
-   for (int igp = 0; igp < int(gp_cat1.size); igp++) {
+   //cout << "tmpGP size: " << tmpGP.size() << endl;
+   //cout << "gp_cat1.size: " << gp_cat1.size() << endl;
+
+   for (int igp = 0; igp < int(gp_cat1.size()); igp++) {
        GenParticle gp = gp_cat1[igp];
        double gp_et = gp.P4().Et();
        double gp_pt = gp.P4().Pt();
@@ -189,26 +258,67 @@ void ttGamma::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2,
            double gp2_pt = gp2.P4().Pt();
            double gp2_eta = gp2.P4().Eta();
            double gp2_phi = gp2.P4().Phi();
-           double dR = DeltaR(gp_eta,gp_phi,gp2_eta,gp2_phi);
+           double dR = deltaR(gp_eta,gp_phi,gp2_eta,gp2_phi);
 
            if (dR < smallestDr) smallestDr = dR; // smallest distance w.r.s interesting gen particle
-           if (dR < cone_iso) pTSum += gp_pt2; // used for isolation cut
+           if (dR < cone_iso) {pTSum += gp2_pt; /*cout << "pTSum: " << pTSum << endl;*/} // used for isolation cut
 
            for (int j = 0; j < nBinsForFrix; j++) { // save relavant info for frixione isolation
-               double cone_var = (initConeFrix + j*cone_frix/nBinsForFrixione);
+               double cone_var = (initConeFrix + j*cone_frix/nBinsForFrix);
                if (dR < cone_var && cone_var < cone_frix) ets[j] += gp2_et/(1-cos(cone_var) )*(1-cos(cone_frix) );
 
                }
            }// loop all other particles
 
-       gp_cat1[igp].SetIso(pTSum/gp_pt);
+//       cout << "pTSum: " << pTSum << ", gp_pt: " << gp_pt << endl;
+       gp_cat1[igp].SetIso(pTSum);
        gp_cat1[igp].SetSmallestDr(smallestDr);
 
+/*
+       cout << "Et: " << gp_et << endl;
        for (int k = 0; k < nBinsForFrix; k++) {
-           if (ets[k] > gp_et) passFrix = false; break;
+           cout << "ets[" << k << "]: " << ets[k] << endl;
            }
-
+*/
+       for (int k = 0; k < nBinsForFrix; k++) {
+           if (ets[k] > gp_et) {
+              passFrix = false; break;
+              }
+           }
+//       cout << "pass/fail: " << (passFrix?1:0) << endl; cout << endl;
        gp_cat1[igp].SetFrixioneIso(passFrix);
 
        }// loop particle type which is interesting for study
 }
+
+void ttGamma::FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* isoPassFrix)
+{
+
+  for (int i = 0; i < int(phos.size()); i++) {
+
+      GenParticle pho = phos[i];
+      TLorentzVector phop4 = pho.P4();
+      double phopt = phop4.Pt();
+      double phoeta = phop4.Eta();
+      double phophi = phop4.Phi();
+
+      //if (abs(phoeta) > 2.6) continue;
+      pT->Fill(phopt);
+      eta->Fill(phoeta);
+      phi->Fill(phophi);
+      iso->Fill(pho.GetIso());
+      minDr->Fill(pho.GetSmallestDr());
+      if (pho.GetFrixioneIso() ) {
+         minDrPassFrix->Fill(pho.GetSmallestDr());
+         isoPassFrix->Fill(pho.GetIso());
+         }
+
+      if (phopt < 1) {
+
+       //  cout << "pt: " << phopt << ", eta: " << phoeta << ", phi: " << phophi << ", status: " << pho.Status() << endl;
+
+         }
+
+      }
+
+} 

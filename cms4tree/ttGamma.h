@@ -1446,18 +1446,53 @@ public :
    virtual void    LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& lep, vector<GenParticle>& had, int genCat = 0);
    virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, vector<GenParticle> gp_cat3, double cone_iso, double cone_frix);
 
-   TFile      *outputRootFile;
-   TH1F* nPromptPhoton = new TH1F("nPromptPhoton","",10,0,10);
-   TH1F* nPromptPhoton_iso = new TH1F("nPromptPhoton_iso","",10,0,10);
-   TH1F* nHardProcessPhoton = new TH1F("nHardProcessPhoton","",10,0,10);
-   TH1F* nPromptPhotonFromHardProcess = new TH1F("nPromptPhotonFromHardProcess","",10,0,10);
-   TH1F* nPromptPhotonFromHardProcess_notFromPho = new TH1F("nPromptPhotonFromHardProcess_notFromPho","",10,0,10);
-   TH1F* nPromptPhoton_notFromPho = new TH1F("nPromptPhoton_notFromPho","",10,0,10);
-   TH1F* nGenParticle = new TH1F("nGenParticle","",100,0,1000);
-   TH1F* nGenParticle_stat1 = new TH1F("nGenParticle_stat1","",100,0,1000);
-   TH1F* nGenParticle_stat22_23 = new TH1F("nGenParticle_stat22_23","",100,0,1000);
-   TH1F* nGenParticle_hardProcess = new TH1F("nGenParticle_hardProcess","",100,0,1000);
+   virtual void    FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* isoPassFrix);
 
+   TFile      *outputRootFile;
+   TH1F* nPhoton_s1 = new TH1F("nPhoton_s1","",50,0,50);
+   TH1F* nPhoton_s22_23 = new TH1F("nPhoton_s22_23","",50,0,50);
+   TH1F* nPhoton_prompt = new TH1F("nPhoton_prompt","",50,0,50);
+   TH1F* nPhoton_hard = new TH1F("nPhoton_hard","",50,0,50);
+   TH1F* nLepton_s1 = new TH1F("nLepton_s1","",50,0,50);
+   TH1F* nLepton_s22_23 = new TH1F("nLepton_s22_23","",50,0,50);
+   TH1F* nLepton_prompt = new TH1F("nLepton_prompt","",50,0,50);
+   TH1F* nLepton_hard = new TH1F("nLepton_hard","",50,0,50);
+   TH1F* nHadron_s1 = new TH1F("nHadron_s1","",50,0,50);
+   TH1F* nHadron_s22_23 = new TH1F("nHadron_s22_23","",50,0,50);
+   TH1F* nHadron_prompt = new TH1F("nHadron_prompt","",50,0,50);
+   TH1F* nHadron_hard = new TH1F("nHadron_hard","",50,0,50);
+
+   TH1F* pTPhoton_hard = new TH1F("pTPhoton_hard","",100,0,200);
+   TH1F* etaPhoton_hard = new TH1F("etaPhoton_hard","",100,-5,5);
+   TH1F* phiPhoton_hard = new TH1F("phiPhoton_hard","",100,-3.15,3.15);
+   TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,10);
+   TH1F* minDrPhoton_hard = new TH1F("minDrPhoton_hard","",100,0,4);
+   TH1F* minDrPhoton_passFrix_hard = new TH1F("minDrPhoton_passFrix_hard","",100,0,4);
+   TH1F* isoPhoton_passFrix_hard = new TH1F("isoPhoton_passFrix_hard","",100,0,10);
+
+   TH1F* pTPhoton_prompt = new TH1F("pTPhoton_prompt","",100,0,200);
+   TH1F* etaPhoton_prompt = new TH1F("etaPhoton_prompt","",100,-5,5);
+   TH1F* phiPhoton_prompt = new TH1F("phiPhoton_prompt","",100,-3.15,3.15);
+   TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,10);
+   TH1F* minDrPhoton_prompt = new TH1F("minDrPhoton_prompt","",100,0,4);
+   TH1F* minDrPhoton_passFrix_prompt = new TH1F("minDrPhoton_passFrix_prompt","",100,0,4);
+   TH1F* isoPhoton_passFrix_prompt = new TH1F("isoPhoton_passFrix_prompt","",100,0,10);
+
+   TH1F* pTPhoton_s1 = new TH1F("pTPhoton_s1","",100,0,200);
+   TH1F* etaPhoton_s1 = new TH1F("etaPhoton_s1","",100,-5,5);
+   TH1F* phiPhoton_s1 = new TH1F("phiPhoton_s1","",100,-3.15,3.15);
+   TH1F* isoPhoton_s1 = new TH1F("isoPhoton_s1","",100,0,10);
+   TH1F* minDrPhoton_s1 = new TH1F("minDrPhoton_s1","",100,0,4);
+   TH1F* minDrPhoton_passFrix_s1 = new TH1F("minDrPhoton_passFrix_s1","",100,0,4);
+   TH1F* isoPhoton_passFrix_s1 = new TH1F("isoPhoton_passFrix_s1","",100,0,10);
+
+   TH1F* pTPhoton_s22_23 = new TH1F("pTPhoton_s22_23","",100,0,200);
+   TH1F* etaPhoton_s22_23 = new TH1F("etaPhoton_s22_23","",100,-5,5);
+   TH1F* phiPhoton_s22_23 = new TH1F("phiPhoton_s22_23","",100,-3.15,3.15);
+   TH1F* isoPhoton_s22_23 = new TH1F("isoPhoton_s22_23","",100,0,10);
+   TH1F* minDrPhoton_s22_23 = new TH1F("minDrPhoton_s22_23","",100,0,4);
+   TH1F* minDrPhoton_passFrix_s22_23 = new TH1F("minDrPhoton_passFrix_s22_23","",100,0,4);
+   TH1F* isoPhoton_passFrix_s22_23 = new TH1F("isoPhoton_passFrix_s22_23","",100,0,10);
 
    ClassDef(ttGamma,0);
 
