@@ -26,11 +26,12 @@ filename = args.inputfile
 
 #treename = "cscRootMaker/Events"
 treename = "Events"
-selectorname = "ttGamma.C"
+selectorname = "cms4GenSelector.C"
 
 savedir = "DUMMY" #"/home/mhl/public_html/2017/20171017_cscSeg/"
 
-f_ = ROOT.TFile.Open("/hadoop/cms/store/group/snt/run2_mc2017//TTGamma_SingleLeptFromT_TuneCP5_PSweights_13TeV_madgraph_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_CMS4_V09-04-13/merged_ntuple_1.root")
+#f_ = ROOT.TFile.Open("/hadoop/cms/store/group/snt/run2_mc2017//TTGamma_SingleLeptFromT_TuneCP5_PSweights_13TeV_madgraph_pythia8_RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1_MINIAODSIM_CMS4_V09-04-13/merged_ntuple_1.root")
+f_ = ROOT.TFile.Open("/hadoop/cms/store/group/snt/run2_moriond17/TTGJets_TuneCUETP8M1_13TeV-amcatnloFXFX-madspin-pythia8_RunIISummer16MiniAODv2-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v6_ext1-v1/V08-00-16/merged_ntuple_1.root")
 t_ = f_.Get(treename)
 n_ = t_.GetEntries()
 s_ = ROOT.TSelector.GetSelector(selectorname)

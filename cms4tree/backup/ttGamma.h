@@ -1443,10 +1443,12 @@ public :
    virtual void    SlaveTerminate();
    virtual void    Terminate();
 
-   virtual void    LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& lep, vector<GenParticle>& had, int genCat = 0);
+   virtual void    LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& lep, vector<GenParticle>& had, int genCat = 0, bool photonOnly = false);
    virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, vector<GenParticle> gp_cat3, double cone_iso, double cone_frix);
+   virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, double cone_iso, double cone_frix);
 
    virtual void    FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* isoPassFrix);
+   virtual void    GetPromptNotHardPhoton(vector<GenParticle> hard, vector<GenParticle> prompt, vector<GenParticle>& prompt_notHard);
 
    TFile      *outputRootFile;
    TH1F* nPhoton_s1 = new TH1F("nPhoton_s1","",50,0,50);
@@ -1493,6 +1495,11 @@ public :
    TH1F* minDrPhoton_s22_23 = new TH1F("minDrPhoton_s22_23","",100,0,4);
    TH1F* minDrPhoton_passFrix_s22_23 = new TH1F("minDrPhoton_passFrix_s22_23","",100,0,4);
    TH1F* isoPhoton_passFrix_s22_23 = new TH1F("isoPhoton_passFrix_s22_23","",100,0,10);
+
+   TH2F* nPrompt_nPromptNotHard = new TH2F("nPrompt_nPromptNotHard","",10,0,10,10,0,10);
+
+   TH1F* hardLep_id = new TH1F("hardLep_id","", 20,0,20);
+   TH1F* hardLep_momId = new TH1F("hardLep_momId","", 20,0,20);
 
    ClassDef(ttGamma,0);
 

@@ -55,6 +55,8 @@ GenParticle::GenParticle(double px, double py, double pz, double e, int id, int 
 
  p4_.SetPxPyPzE(px,py,pz,e);
 
+//  cout << isPrompt << ", " << id << endl;
+
 // if (p4_.Pt() == 0) cout << "px: " << px << ", py: " << py << ", pz: " << pz << ", e: " << e << ", status: " << status << endl;
 }
 
