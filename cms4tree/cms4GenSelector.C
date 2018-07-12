@@ -68,7 +68,7 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
    // The return value is currently not used.
 
    fReader.SetEntry(entry);
-   if (entry > 10000) return kTRUE;
+   if (entry >= 100000) return kTRUE;
    if (entry%1000 == 0) cout << "entry: " << entry << endl;
 
    vector<GenParticle> genPhotons_prompt, genLeptons_prompt, genHadrons_prompt;
@@ -92,8 +92,8 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
    //SetVals(genPhotons_prompt_notHard, genLeptons_hard, 0.3, 0.05);
    //SetVals(genPhotons_hard, genLeptons_hard, 0.3, 0.05);
    
-   SetVals(genPhotons_prompt_notHard, genHadrons_hard, 0.3, 0.05);
-   SetVals(genPhotons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                                                  
+   SetVals(genPhotons_prompt_notHard, genHadrons_hard, 0.3, 0.3);
+   SetVals(genPhotons_hard, genHadrons_hard, 0.3, 0.3);                                                                                                                                                  
 
    //SetVals(genPhotons_hard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                                 
    //SetVals(genPhotons_prompt_notHard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                       
@@ -104,17 +104,36 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
    nLepton_hard->Fill(genLeptons_hard.size());
    nHadron_hard->Fill(genHadrons_hard.size());
 
-   nPhoton_prompt->Fill(genPhotons_prompt_notHard.size()); nPhoton_hard->Fill(genPhotons_hard.size());
-   nLepton_prompt->Fill(genLeptons_prompt.size()); nLepton_hard->Fill(genLeptons_hard.size());
-   nHadron_prompt->Fill(genHadrons_prompt.size()); nHadron_hard->Fill(genHadrons_hard.size());
+   nPhoton_prompt->Fill(genPhotons_prompt_notHard.size());
+   nLepton_prompt->Fill(genLeptons_prompt.size());
+   nHadron_prompt->Fill(genHadrons_prompt.size());
 
-   for (int iLep_h=0; iLep_h < int(genLeptons_hard.size()); iLep_h++) hardId_lep->Fill(genLeptons_hard[iLep_h].ID());
-   for (int iHad_h=0; iHad_h < int(genHadrons_hard.size()); iHad_h++) hardId_had->Fill(genHadrons_hard[iHad_h].ID());
+   for (int iLep_h=0; iLep_h < int(genLeptons_hard.size()); iLep_h++) {
+       int tmpMomId = genLeptons_hard[iLep_h].ID_mom();
+       hardId_lep->Fill(genLeptons_hard[iLep_h].ID());
+       lep_simpleGrandMa->Fill(abs(tmpMomId) > 30 ? 29 : abs(tmpMomId));
+       }
+   for (int iHad_h=0; iHad_h < int(genHadrons_hard.size()); iHad_h++) {
+       int tmpId = genHadrons_hard[iHad_h].ID();
+       int tmpMomId = genHadrons_hard[iHad_h].ID_mom();
+       hardId_had->Fill(abs(tmpId));
+       hadId_hadMomId_hard->Fill(abs(tmpId), abs(tmpMomId) > 30 ? 29 : abs(tmpMomId));       
+       had_simpleGrandMa->Fill(abs(tmpMomId) > 30 ? 29 : abs(tmpMomId));
+       //if (abs(tmpMomId) > 30) cout << "bigID: " << tmpMomId << endl;
+   }
    nHardLep_nHardHad->Fill(genLeptons_hard.size(), genHadrons_hard.size());
 
    //FillSimplePhotonVar(genPhotons_prompt, pTPhoton_prompt, etaPhoton_prompt, phiPhoton_prompt, isoPhoton_prompt, minDrPhoton_prompt, minDrPhoton_passFrix_prompt, isoPhoton_passFrix_prompt);            
    FillSimplePhotonVar(genPhotons_hard, pTPhoton_hard, etaPhoton_hard, phiPhoton_hard, isoPhoton_hard, minDrPhoton_hard, minDrPhoton_passFrix_hard, isoPhoton_passFrix_hard);
    FillSimplePhotonVar(genPhotons_prompt_notHard, pTPhoton_prompt, etaPhoton_prompt, phiPhoton_prompt, isoPhoton_prompt, minDrPhoton_prompt, minDrPhoton_passFrix_prompt, isoPhoton_passFrix_prompt);
+
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_u, 2);   
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_d, 1);     
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_c, 4);     
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_s, 3);     
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_t, 6);     
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_b, 5);     
+   FillMinDrByGenID(genPhotons_hard, minDrPhoton_hard_g, 21);     
 
    nPrompt_nPromptNotHard->Fill(genPhotons_prompt.size(),genPhotons_prompt_notHard.size());
 
@@ -166,6 +185,18 @@ void cms4GenSelector::Terminate()
    hardId_lep->Write();
    hardId_had->Write();
    nHardLep_nHardHad->Write();
+   hadId_hadMomId_hard->Write();   
+
+   minDrPhoton_hard_u->Write();
+   minDrPhoton_hard_d->Write();
+   minDrPhoton_hard_c->Write();
+   minDrPhoton_hard_s->Write();
+   minDrPhoton_hard_t->Write();
+   minDrPhoton_hard_b->Write();
+   minDrPhoton_hard_g->Write();
+   
+   lep_simpleGrandMa->Write();
+   had_simpleGrandMa->Write();
 
    outputRootFile->Close();
 
@@ -183,6 +214,8 @@ void cms4GenSelector::LoadGenParticles(vector<GenParticle>& pho, vector<GenParti
     float genP4 = floatROOTMathPxPyPzE4DROOTMathLorentzVectors_genMaker_genpsp4_CMS3_obj_fCoordinates_fT[i];
     int genID = ints_genMaker_genpsid_CMS3_obj[i];
     int simpleMomId = ints_genMaker_genpsidsimplemother_CMS3_obj[i];
+//    int simpleMomId = ints_genMaker_genpsidmother_CMS3_obj[i];
+//    int simpleMomId =  ints_genMaker_genpsidsimplegrandma_CMS3_obj[i];
     int genStatus = ints_genMaker_genpsstatus_CMS3_obj[i];
     bool isPrompt = (*bools_genMaker_genpsIsPromptFinalState_CMS3_obj)[i];
     bool isHardProcess = (*bools_genMaker_genpsIsHardProcess_CMS3_obj)[i];
@@ -212,7 +245,7 @@ void cms4GenSelector::LoadGenParticles(vector<GenParticle>& pho, vector<GenParti
 void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, vector<GenParticle> gp_cat3, double cone_iso, double cone_frix)
 {
 
-  const int nBinsForFrix = 10;
+  const int nBinsForFrix = 100;
   const double initConeFrix = 0.000000000001;
   vector<GenParticle> tmpGP; tmpGP.clear();
   //   tmpGP.insert(tmpGP.end(), gp_cat1.begin(), gp_cat1.end());                                                                                                                                           
@@ -265,6 +298,7 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
                                                                                                     
     gp_cat1[igp].SetIso(pTSum);
     gp_cat1[igp].SetSmallestDr(smallestDr);
+    gp_cat1[igp].SetSmallestDrId(smallestDr_id);
 
     for (int k = 0; k < nBinsForFrix; k++) {
       if (ets[k] > gp_et) {
@@ -301,6 +335,7 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
        double pTSum = 0;
        double smallestDr = 9999;
        int smallestDr_id = 0;
+       int smallestDr_momId = 0;
        double smallestDr_pT = -1;
        int smallestDr_status = 0;
        double ets[nBinsForFrix] = {};
@@ -319,6 +354,7 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
            if (dR < smallestDr) {
               smallestDr = dR; // smallest distance w.r.s interesting gen particle
               smallestDr_id = gp2.ID();
+              smallestDr_momId = gp2.ID_mom();
               smallestDr_pT = gp2_pt;
               smallestDr_status = gp2.Status();
            }
@@ -335,6 +371,8 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
        // cout << "pTSum: " << pTSum << ", gp_pt: " << gp_pt << endl;
        gp_cat1[igp].SetIso(pTSum);
        gp_cat1[igp].SetSmallestDr(smallestDr);
+       gp_cat1[igp].SetSmallestDrId(smallestDr_id);
+       gp_cat1[igp].SetSmallestDrMomId(smallestDr_momId);
 
        for (int k = 0; k < nBinsForFrix; k++) {
            if (ets[k] > gp_et) {
@@ -344,7 +382,7 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
        // cout << "pass/fail: " << (passFrix?1:0) << endl; cout << endl;
        gp_cat1[igp].SetFrixioneIso(passFrix);
 
-       //if (smallestDr < 0.2) cout << "cloestStatus: " << smallestDr_status << ", cloestID: " << smallestDr_id << ", cloestPt: " << smallestDr_pT << endl;
+       //cout << "cloestStatus: " << smallestDr_status << ", cloestID: " << smallestDr_id << ", cloestMomID: " << smallestDr_momId << ", cloestPt: " << smallestDr_pT << endl;
        
        /*
        if (!passFrix ) {
@@ -405,4 +443,27 @@ void cms4GenSelector::GetPromptNotHardPhoton(vector<GenParticle> hard, vector<Ge
 
         }
       }
+}
+
+void cms4GenSelector::FillMinDrByGenID(vector<GenParticle> phos, TH1F* minDr, int id){
+
+  for (int i = 0; i < int(phos.size()); i++){
+
+      GenParticle pho = phos[i];
+      TLorentzVector phop4 = pho.P4();
+      double phopt = phop4.Pt();
+      double phoeta = phop4.Eta();
+      double phophi = phop4.Phi();
+
+      if (abs(phoeta) > 2.6 || phopt < 10) continue;
+      double mindr = pho.GetSmallestDr();
+      int minDrId = pho.GetSmallestDrId();
+      int minDrMomId = pho.GetSmallestDrMomId();
+//cout << "minDrMomId: " << minDrMomId << endl;
+      if (abs(minDrId) == id && abs(minDrMomId) == 24) minDr->Fill(mindr);
+//      if (abs(mindr) < 0.1 && id == 2 ) cout << "id: " << minDrId << ", momId: " << minDrMomId << endl;
+
+  }
+
+
 }

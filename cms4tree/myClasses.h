@@ -20,10 +20,14 @@ public:
   void SetIso(double iso) {iso_ = iso;} 
   void SetFrixioneIso(bool passFrixioneIso) {passFrixioneIso_ = passFrixioneIso;}
   void SetSmallestDr(double smallestDr) {smallestDr_ = smallestDr;}
+  void SetSmallestDrId(int smallestDrId) {smallestDrId_ = smallestDrId;}
+  void SetSmallestDrMomId(int smallestDrMomId) {smallestDrMomId_ = smallestDrMomId;}
 
   double GetIso() {return iso_;}
   bool GetFrixioneIso() {return passFrixioneIso_;}
   double GetSmallestDr() {return smallestDr_;}
+  int GetSmallestDrId() {return smallestDrId_;}
+  int GetSmallestDrMomId() {return smallestDrMomId_;}
  
   // two vectors saving (1-cosDelta)/(1-cosDelta_0) and sumEt/Photon eta for various Delta within Delta_0
 
@@ -41,6 +45,8 @@ private:
   double iso_;
   bool passFrixioneIso_;
   double smallestDr_; 
+  int smallestDrId_;
+  int smallestDrMomId_;
 
 };
 

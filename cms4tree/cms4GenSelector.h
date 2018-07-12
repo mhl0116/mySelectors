@@ -2600,38 +2600,51 @@ public :
 
    virtual void    FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* isoPassFrix);
    virtual void    GetPromptNotHardPhoton(vector<GenParticle> hard, vector<GenParticle> prompt, vector<GenParticle>& prompt_notHard);
+   virtual void    FillMinDrByGenID(vector<GenParticle> phos, TH1F* minDr, int id);
 
    TFile      *outputRootFile;
-   TH1F* nPhoton_prompt = new TH1F("nPhoton_prompt","",50,0,50);
-   TH1F* nPhoton_hard = new TH1F("nPhoton_hard","",50,0,50);
+   TH1F* nPhoton_prompt = new TH1F("nPhoton_prompt","",10,0,10);
+   TH1F* nPhoton_hard = new TH1F("nPhoton_hard","",10,0,10);
 
-   TH1F* nLepton_prompt = new TH1F("nLepton_prompt","",50,0,50);
-   TH1F* nLepton_hard = new TH1F("nLepton_hard","",50,0,50);
+   TH1F* nLepton_prompt = new TH1F("nLepton_prompt","",10,0,10);
+   TH1F* nLepton_hard = new TH1F("nLepton_hard","",10,0,10);
 
-   TH1F* nHadron_prompt = new TH1F("nHadron_prompt","",50,0,50);
-   TH1F* nHadron_hard = new TH1F("nHadron_hard","",50,0,50);
+   TH1F* nHadron_prompt = new TH1F("nHadron_prompt","",15,0,15);
+   TH1F* nHadron_hard = new TH1F("nHadron_hard","",15,0,15);
 
    TH1F* pTPhoton_hard = new TH1F("pTPhoton_hard","",100,0,200);
-   TH1F* etaPhoton_hard = new TH1F("etaPhoton_hard","",100,-5,5);
-   TH1F* phiPhoton_hard = new TH1F("phiPhoton_hard","",100,-3.15,3.15);
+   TH1F* etaPhoton_hard = new TH1F("etaPhoton_hard","",100,-3.2,3.2);
+   TH1F* phiPhoton_hard = new TH1F("phiPhoton_hard","",50,-3.2,3.2);
    TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,10);
-   TH1F* minDrPhoton_hard = new TH1F("minDrPhoton_hard","",100,0,4);
-   TH1F* minDrPhoton_passFrix_hard = new TH1F("minDrPhoton_passFrix_hard","",100,0,4);
+   TH1F* minDrPhoton_hard = new TH1F("minDrPhoton_hard","",100,0,0.5);
+   TH1F* minDrPhoton_passFrix_hard = new TH1F("minDrPhoton_passFrix_hard","",100,0,0.5);
    TH1F* isoPhoton_passFrix_hard = new TH1F("isoPhoton_passFrix_hard","",100,0,10);
 
+   TH1F* minDrPhoton_hard_u = new TH1F("minDrPhoton_hard_u","",100,0,5);
+   TH1F* minDrPhoton_hard_d = new TH1F("minDrPhoton_hard_d","",100,0,5);
+   TH1F* minDrPhoton_hard_c = new TH1F("minDrPhoton_hard_c","",100,0,5);
+   TH1F* minDrPhoton_hard_s = new TH1F("minDrPhoton_hard_s","",100,0,5);
+   TH1F* minDrPhoton_hard_t = new TH1F("minDrPhoton_hard_t","",100,0,5);
+   TH1F* minDrPhoton_hard_b = new TH1F("minDrPhoton_hard_b","",100,0,5);
+   TH1F* minDrPhoton_hard_g = new TH1F("minDrPhoton_hard_g","",100,0,5);
+
    TH1F* pTPhoton_prompt = new TH1F("pTPhoton_prompt","",100,0,200);
-   TH1F* etaPhoton_prompt = new TH1F("etaPhoton_prompt","",100,-5,5);
-   TH1F* phiPhoton_prompt = new TH1F("phiPhoton_prompt","",100,-3.15,3.15);
+   TH1F* etaPhoton_prompt = new TH1F("etaPhoton_prompt","",100,-3.2,3.2);
+   TH1F* phiPhoton_prompt = new TH1F("phiPhoton_prompt","",100,-3.2,3.2);
    TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,10);
-   TH1F* minDrPhoton_prompt = new TH1F("minDrPhoton_prompt","",100,0,4);
-   TH1F* minDrPhoton_passFrix_prompt = new TH1F("minDrPhoton_passFrix_prompt","",100,0,4);
+   TH1F* minDrPhoton_prompt = new TH1F("minDrPhoton_prompt","",100,0,0.5);
+   TH1F* minDrPhoton_passFrix_prompt = new TH1F("minDrPhoton_passFrix_prompt","",100,0,0.5);
    TH1F* isoPhoton_passFrix_prompt = new TH1F("isoPhoton_passFrix_prompt","",100,0,10);
 
    TH2F* nPrompt_nPromptNotHard = new TH2F("nPrompt_nPromptNotHard","",10,0,10,10,0,10);
-
    TH2F* nHardLep_nHardHad = new TH2F("nHardLep_nHardHad","",10,0,10,10,5,15);
    TH1F* hardId_lep = new TH1F("hardId_lep","",20,0,20);
    TH1F* hardId_had = new TH1F("hardId_had","",22,0,22);
+   TH2F* hadId_hadMomId_hard = new TH2F("hadId_hadMomId_hard","",30,0,30,30,0,30);
+
+   TH1F* had_simpleGrandMa = new TH1F("had_simpleGrandMa","",30,0,30);
+   TH1F* lep_simpleGrandMa = new TH1F("lep_simpleGrandMa","",30,0,30);
+
 
    ClassDef(cms4GenSelector,0);
 
