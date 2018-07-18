@@ -22,13 +22,15 @@ public:
   void SetSmallestDr(double smallestDr) {smallestDr_ = smallestDr;}
   void SetSmallestDrId(int smallestDrId) {smallestDrId_ = smallestDrId;}
   void SetSmallestDrMomId(int smallestDrMomId) {smallestDrMomId_ = smallestDrMomId;}
+  void SetSmallestDrStatus(int smallestDrStatus) {smallestDrStatus_ = smallestDrStatus;}
 
   double GetIso() {return iso_;}
   bool GetFrixioneIso() {return passFrixioneIso_;}
   double GetSmallestDr() {return smallestDr_;}
   int GetSmallestDrId() {return smallestDrId_;}
   int GetSmallestDrMomId() {return smallestDrMomId_;}
- 
+  int GetSmallestDrStatus() {return smallestDrStatus_;}
+
   // two vectors saving (1-cosDelta)/(1-cosDelta_0) and sumEt/Photon eta for various Delta within Delta_0
 
   ~GenParticle();
@@ -47,6 +49,7 @@ private:
   double smallestDr_; 
   int smallestDrId_;
   int smallestDrMomId_;
+  int smallestDrStatus_;
 
 };
 
