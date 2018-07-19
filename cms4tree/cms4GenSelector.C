@@ -103,14 +103,13 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
    //SetVals(genPhotons_prompt_notHard, genLeptons_hard, 0.3, 0.05);
    //SetVals(genPhotons_hard, genLeptons_hard, 0.3, 0.05);
    
-   SetVals(genPhotons_prompt_notHard, genHadrons_hard, 0.3, 0.05);
-   SetVals(genPhotons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                                                  
+   //SetVals(genPhotons_prompt_notHard, genHadrons_hard, 0.3, 0.05);
+   //SetVals(genPhotons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                                                  
 
-   //SetVals(genPhotons_hard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                                 
-   //SetVals(genPhotons_prompt_notHard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                       
+   SetVals(genPhotons_hard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                   SetVals(genPhotons_prompt_notHard, genLeptons_hard, genHadrons_hard, 0.3, 0.05);                                                                                                                       
 
    //SetVals(genPhotons_hard, genPhotons_prompt, 0.3, 0.05);                                                                                                                                                
-
+/*
    if (genPhotons_hard.size() == 2) {
       GenParticle hardPho1 = genPhotons_hard[0];
       GenParticle hardPho2 = genPhotons_hard[1];
@@ -135,7 +134,7 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
        dR_hard_prompt_photon->Fill(cloestPhoDr);
 
        }
-
+*/
    //return kTRUE;                                                                         
 
    nPhoton_hard->Fill(genPhotons_hard.size());
@@ -145,7 +144,7 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
    nPhoton_prompt->Fill(genPhotons_prompt_notHard.size());
    nLepton_prompt->Fill(genLeptons_prompt.size());
    nHadron_prompt->Fill(genHadrons_prompt.size());
-
+/*
    for (int iLep_h=0; iLep_h < int(genLeptons_hard.size()); iLep_h++) {
        int tmpMomId = genLeptons_hard[iLep_h].ID_mom();
        hardId_lep->Fill(genLeptons_hard[iLep_h].ID());
@@ -159,6 +158,7 @@ Bool_t cms4GenSelector::Process(Long64_t entry)
        had_simpleGrandMa->Fill(abs(tmpMomId) > 30 ? 29 : abs(tmpMomId));
        //if (abs(tmpMomId) > 30) cout << "bigID: " << tmpMomId << endl;
    }
+*/
    nHardLep_nHardHad->Fill(genLeptons_hard.size(), genHadrons_hard.size());
 
    //FillSimplePhotonVar(genPhotons_prompt, pTPhoton_prompt, etaPhoton_prompt, phiPhoton_prompt, isoPhoton_prompt, minDrPhoton_prompt, minDrPhoton_passFrix_prompt, isoPhoton_passFrix_prompt);            
@@ -333,7 +333,10 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
     double pTSum = 0;
     double smallestDr = 9999;
     int smallestDr_id = 0;
+    int smallestDr_momId = 0;
     double smallestDr_pT = -1;
+    double smallestDr_eta = 999;
+    int smallestDr_status = 0;
     double ets[nBinsForFrix] = {};
     bool passFrix = true;
 
@@ -351,7 +354,10 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
 	smallestDr = dR; // smallest distance w.r.s interesting gen particle                                                                                                                                
                                                                                                  
 	smallestDr_id = gp2.ID();
+	smallestDr_momId = gp2.ID_mom();
 	smallestDr_pT = gp2_pt;
+	smallestDr_eta = gp2_eta;
+	smallestDr_status = gp2.Status();
       }
       if (dR < cone_iso) {pTSum += gp2_pt; /*cout << "pTSum: " << pTSum << endl;*/} // used for isolation cut                                                                                               
 
@@ -363,20 +369,24 @@ void cms4GenSelector::SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> 
       }
     }// loop all other particles                                                                                                                                                                            
 
-    // cout << "pTSum: " << pTSum << ", gp_pt: " << gp_pt << endl;                                                                                                                                          
+    //cout << "pTSum: " << pTSum << ", gp_pt: " << gp_pt << endl;                                                                                                                                          
                                                                                                     
     gp_cat1[igp].SetIso(pTSum);
     gp_cat1[igp].SetSmallestDr(smallestDr);
     gp_cat1[igp].SetSmallestDrId(smallestDr_id);
+    gp_cat1[igp].SetSmallestDrMomId(smallestDr_momId);
+    gp_cat1[igp].SetSmallestDrStatus(smallestDr_status);
 
     for (int k = 0; k < nBinsForFrix; k++) {
       if (ets[k] > gp_et) {
 	passFrix = false; break;
-      }
-    }
+         }
+        }
     // cout << "pass/fail: " << (passFrix?1:0) << endl; cout << endl;                                                                                                                                       
                                                                                                     
     gp_cat1[igp].SetFrixioneIso(passFrix);
+
+    //cout << "phoIso: " << gp_cat1[igp].GetIso() << endl;
 
     }// loop particle type which is interesting for study                                      
 }
@@ -488,12 +498,13 @@ void cms4GenSelector::FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH
       double phopt = phop4.Pt();
       double phoeta = phop4.Eta();
       double phophi = phop4.Phi();
-
-      if (abs(phoeta) > 2.6 || phopt < 10) continue;
+      double isolation = pho.GetIso();
+//cout << pho.GetIso() << endl;
+      if (abs(phoeta) > 2.6 || phopt < 10 || isolation/phopt > 0.1) continue;
       pT->Fill(phopt);
       eta->Fill(phoeta);
       phi->Fill(phophi);
-      iso->Fill(pho.GetIso());
+      iso->Fill(isolation);
       minDr->Fill(pho.GetSmallestDr());
       //      cout << "minDr: " << pho.GetSmallestDr() << endl;
       if (pho.GetFrixioneIso() ) {
@@ -540,8 +551,9 @@ void cms4GenSelector::FillMinDrByGenID(vector<GenParticle> phos, TH1F* minDr_fro
       double phoeta = phop4.Eta();
       double phophi = phop4.Phi();
       int phoMomId = pho.ID_mom();
+      double isolation = pho.GetIso();
 
-      if (abs(phoeta) > 2.6 || phopt < 10) continue;
+      if (abs(phoeta) > 2.6 || phopt < 10 || isolation/phopt > 0.1) continue;
       double mindr = pho.GetSmallestDr();
       int minDrId = pho.GetSmallestDrId();
       int minDrMomId = pho.GetSmallestDrMomId();

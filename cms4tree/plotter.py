@@ -25,6 +25,8 @@ def GetAndPlotOverlay(filename1,filename2,leg1,leg2,histname1,histname2,savepath
     nEntry1 = h1.Integral() - h1.GetBinContent(h1.GetNbinsX()+1)
     nEntry2 = h2.Integral() - h2.GetBinContent(h2.GetNbinsX()+1)
 
+    print nEntry1, nEntry2
+
     if h1.Integral() > 0: h1.Scale(1/h1.Integral())
     if h2.Integral() > 0: h2.Scale(1/h2.Integral())
     dummy = ROOT.TH1D("dummy","dummy",1,h1.GetBinLowEdge(1),h1.GetBinLowEdge(h1.GetNbinsX())+h1.GetBinWidth(1))
@@ -44,9 +46,11 @@ def GetAndPlotOverlay(filename1,filename2,leg1,leg2,histname1,histname2,savepath
 
     h1.Draw("hist same")
     h1.SetLineWidth(3)
+    h1.SetLineStyle(2)
     h1.SetLineColor(ROOT.TColor.GetColor("#CA4300"))
     h2.Draw("hist same")
     h2.SetLineWidth(3)
+    h2.SetLineStyle(1)
     h2.SetLineColor(ROOT.TColor.GetColor("#0641B7"))
 
     #h.SetFillColor(ROOT.TColor.GetColor("#FFDF0A"))
@@ -130,8 +134,8 @@ def GetAndPlot2D(filename,histname,savepath,xTitle,yTitle):
 args=ParseOption()
 tag = args.tag
 
-filename1 = "tmp_ttg.root"
-filename2 = "tmp_ttgg.root"
+filename1 = "tmpRootFiles/tmp_ttg.root"
+filename2 = "tmpRootFiles/tmp_ttgg.root"
 
 #savepath = "/home/users/hmei/public_html/2018/20180711_genPhotonCheck/"
 #savepath = "/home/users/hmei/public_html/2018/20180713_genPhotonCheck_fromW/"
@@ -153,7 +157,7 @@ histnames = [\
 "nHadron_prompt","nHadron_hard",
 "pTPhoton_prompt","pTPhoton_hard",
 "etaPhoton_prompt","etaPhoton_hard",
-#"isoPhoton_prompt","isoPhoton_hard",
+"isoPhoton_prompt","isoPhoton_hard",
 "phiPhoton_prompt","phiPhoton_hard",
 "minDrPhoton_prompt","minDrPhoton_hard",
 "minDrPhoton_passFrix_prompt","minDrPhoton_passFrix_hard",
@@ -184,11 +188,13 @@ for histname in histnames:
 
 ################################################################################################
 
-tags = ["_u_fromW","_d_fromW","_c_fromW","_s_fromW","_t_fromW","_b_fromW","_g_fromW",
-        "_u_notFromW","_d_notFromW","_c_notFromW","_s_notFromW","_t_notFromW","_b_notFromW","_g_notFromW",""]
+tags1 = ["_u_fromW","_d_fromW","_c_fromW","_s_fromW","_t_fromW","_b_fromW","_g_fromW"]
+tags2 = ["_u_notFromW","_d_notFromW","_c_notFromW","_s_notFromW","_t_notFromW","_b_notFromW","_g_notFromW",""]
 
-#for tag in tags:
-#    GetAndPlotOverlay(filename1,filename2,"ttG","ttGG","minDrPhoton_prompt"+tag,"minDrPhoton_hard"+tag,savepath,"minDr_promptFromTTG_hardFromTTGG"+tag,"minDr"+tag)
+for tag in tags1:
+    GetAndPlotOverlay(filename1,filename2,"ttG","ttGG","minDrPhoton_prompt"+tag,"minDrPhoton_hard"+tag,"/home/users/hmei/public_html/2018/20180718_fromW/","minDr_promptFromTTG_hardFromTTGG"+tag,"minDr"+tag)
+for tag in tags2:
+    GetAndPlotOverlay(filename1,filename2,"ttG","ttGG","minDrPhoton_prompt"+tag,"minDrPhoton_hard"+tag,"/home/users/hmei/public_html/2018/20180718_notFromW/","minDr_promptFromTTG_hardFromTTGG"+tag,"minDr"+tag)
 
 
 ################################################################################################

@@ -1615,8 +1615,10 @@ public :
    TTreeReaderArray<float> floats_photonMaker_photonsphiSC_CMS3_obj = {fReader, "floats_photonMaker_photonsphiSC_CMS3.obj"};
    TTreeReaderValue<Bool_t> floats_photonMaker_photonsphotonIso_CMS3_present = {fReader, "floats_photonMaker_photonsphotonIso_CMS3.present"};
    TTreeReaderArray<float> floats_photonMaker_photonsphotonIso_CMS3_obj = {fReader, "floats_photonMaker_photonsphotonIso_CMS3.obj"};
+*/
    TTreeReaderValue<Bool_t> floats_photonMaker_photonsrecoChargedHadronIso_CMS3_present = {fReader, "floats_photonMaker_photonsrecoChargedHadronIso_CMS3.present"};
    TTreeReaderArray<float> floats_photonMaker_photonsrecoChargedHadronIso_CMS3_obj = {fReader, "floats_photonMaker_photonsrecoChargedHadronIso_CMS3.obj"};
+/*
    TTreeReaderValue<Bool_t> floats_photonMaker_photonsrecoNeutralHadronIso_CMS3_present = {fReader, "floats_photonMaker_photonsrecoNeutralHadronIso_CMS3.present"};
    TTreeReaderArray<float> floats_photonMaker_photonsrecoNeutralHadronIso_CMS3_obj = {fReader, "floats_photonMaker_photonsrecoNeutralHadronIso_CMS3.obj"};
    TTreeReaderValue<Bool_t> floats_photonMaker_photonsrecoPhotonIso_CMS3_present = {fReader, "floats_photonMaker_photonsrecoPhotonIso_CMS3.present"};
@@ -2619,7 +2621,7 @@ public :
    TH1F* pTPhoton_hard = new TH1F("pTPhoton_hard","",100,0,200);
    TH1F* etaPhoton_hard = new TH1F("etaPhoton_hard","",100,-3.2,3.2);
    TH1F* phiPhoton_hard = new TH1F("phiPhoton_hard","",50,-3.2,3.2);
-   TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,10);
+   TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,100);
    TH1F* minDrPhoton_hard = new TH1F("minDrPhoton_hard","",100,0,5);
    TH1F* minDrPhoton_passFrix_hard = new TH1F("minDrPhoton_passFrix_hard","",100,0,5);
    TH1F* isoPhoton_passFrix_hard = new TH1F("isoPhoton_passFrix_hard","",100,0,10);
@@ -2660,7 +2662,7 @@ public :
    TH1F* pTPhoton_prompt = new TH1F("pTPhoton_prompt","",100,0,200);
    TH1F* etaPhoton_prompt = new TH1F("etaPhoton_prompt","",100,-3.2,3.2);
    TH1F* phiPhoton_prompt = new TH1F("phiPhoton_prompt","",100,-3.2,3.2);
-   TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,10);
+   TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,100);
    TH1F* minDrPhoton_prompt = new TH1F("minDrPhoton_prompt","",100,0,5);
    TH1F* minDrPhoton_passFrix_prompt = new TH1F("minDrPhoton_passFrix_prompt","",100,0,5);
    TH1F* isoPhoton_passFrix_prompt = new TH1F("isoPhoton_passFrix_prompt","",100,0,10);
