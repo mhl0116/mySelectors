@@ -1,7 +1,4 @@
-"minDrPhoton_hard_u_fromW","minDrPhoton_hard_d_fromW","minDrPhoton_hard_c_fromW",
-"minDrPhoton_hard_s_fromW","minDrPhoton_hard_t_fromW","minDrPhoton_hard_b_fromW",
-"minDrPhoton_hard_g_fromW",
-"minDrPhoton_hard_u_notFromW","minDrPhoton_hard_d_notFromW","minDrPhoton_hard_c_notFromW",
-"minDrPhoton_hard_s_notFromW","minDrPhoton_hard_t_notFromW","minDrPhoton_hard_b_notFromW",
-"minDrPhoton_hard_g_notFromW",
+   FillMinDrByGenID(phos_h_sel, minDrPhoton_hard_e_fromW, minDrPhoton_hard_e_notFromW, 11);
+   FillMinDrByGenID(phos_h_sel, minDrPhoton_hard_mu_fromW, minDrPhoton_hard_mu_notFromW, 13);
+   FillMinDrByGenID(phos_h_sel, minDrPhoton_hard_tau_fromW, minDrPhoton_hard_tau_notFromW, 15);
 

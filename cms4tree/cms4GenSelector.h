@@ -44,8 +44,10 @@ public :
    TTreeReaderValue<unsigned int> TBits_hltMaker_hltbits_CMS3_obj_fNbits = {fReader, "TBits_hltMaker_hltbits_CMS3.obj.fNbits"};
    TTreeReaderValue<unsigned int> TBits_hltMaker_hltbits_CMS3_obj_fNbytes = {fReader, "TBits_hltMaker_hltbits_CMS3.obj.fNbytes"};
    TTreeReaderArray<UChar_t> TBits_hltMaker_hltbits_CMS3_obj_fAllBits = {fReader, "TBits_hltMaker_hltbits_CMS3.obj.fAllBits"};
+*/
    TTreeReaderValue<Bool_t> ull_eventMaker_evtevent_CMS3_present = {fReader, "ull_eventMaker_evtevent_CMS3.present"};
    TTreeReaderValue<ULong64_t> ull_eventMaker_evtevent_CMS3_obj = {fReader, "ull_eventMaker_evtevent_CMS3.obj"};
+/*
    TTreeReaderValue<Bool_t> bool_metFilterMaker_evtcscTightHaloId_CMS3_present = {fReader, "bool_metFilterMaker_evtcscTightHaloId_CMS3.present"};
    TTreeReaderValue<Bool_t> bool_metFilterMaker_evtcscTightHaloId_CMS3_obj = {fReader, "bool_metFilterMaker_evtcscTightHaloId_CMS3.obj"};
    TTreeReaderValue<Bool_t> bool_metFilterMaker_evthbheFilter_CMS3_present = {fReader, "bool_metFilterMaker_evthbheFilter_CMS3.present"};
@@ -2596,19 +2598,41 @@ public :
    virtual void    SlaveTerminate();
    virtual void    Terminate();
 
-   virtual void    LoadGenParticles(vector<GenParticle>& pho, vector<GenParticle>& lep, vector<GenParticle>& had, int genCat = 0, bool photonOnly = false);
+   virtual void    LoadGenParticles(vector<GenParticle>& genP);
+   virtual void    LoadGenParticles(/*vector<GenParticle>& pho, vector<GenParticle>& lep, vector<GenParticle>& had, int genCat = 0, bool photonOnly = false*/);
    virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, vector<GenParticle> gp_cat3, double cone_iso, double cone_frix);
-   virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, double cone_iso, double cone_frix);
+   virtual void    SetVals(vector<GenParticle>& gp_cat1, vector<GenParticle> gp_cat2, double cone_iso, double cone_frix, int flag=0);
 
-   virtual void    FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* isoPassFrix);
+   virtual void    FillSimplePhotonVar(vector<GenParticle> phos, TH1F* pT, TH1F* eta, TH1F* phi, TH1F* iso, TH1F* minDr, TH1F* minDrPassFrix, TH1F* minDr_sel, TH1F* isoPassFrix);
    virtual void    GetPromptNotHardPhoton(vector<GenParticle> hard, vector<GenParticle> prompt, vector<GenParticle>& prompt_notHard);
    virtual void    FillMinDrByGenID(vector<GenParticle> phos, TH1F* minDr_fromW, TH1F* minDr_notFromW, int id);
+   virtual vector<int>    SelectDiPhoton(vector<GenParticle> phos,TH1F* h_pT1, TH1F* h_pT2, TH1F* h_mgg, TH1F* h_dPhiGG);
+   virtual int    DiffPt_DiffDr_hard_prompt_ttGG(vector<GenParticle> phos, GenParticle pho1_p, GenParticle pho2_p, TH2F* diffPt_diffDr, TH1F* mom_0, TH1F* mom_1);
+   virtual int    DiffPt_DiffDr_hard_prompt_ttG(vector<GenParticle> phos, GenParticle pho1_p, GenParticle pho2_p, TH2F* diffPt_diffDr,TH1F* mom_0, TH1F* mom_1);
+   virtual double  deltaR_p4(TLorentzVector p4_1, TLorentzVector p4_2);
+
    virtual void    SetTag(TString tag, TString inTag);
 
    TString tag_;
    TString inTag_;
 
    TFile      *outputRootFile;
+
+   vector<GenParticle> genPhotons_prompt, genLeptons_prompt, genHadrons_prompt;
+   vector<GenParticle> genPhotons_hard, genLeptons_hard, genHadrons_hard;
+   vector<GenParticle> genPhotons_prompt_notHard;
+   vector<GenParticle> genParticles_s1;
+
+   TH1F* pT1 = new TH1F("pT1","",100,0,10);
+   TH1F* pT2 = new TH1F("pT2","",100,0,10);
+   TH1F* mGG = new TH1F("mGG","",100,0,2000);
+   TH1F* dPhiGG = new TH1F("dPhiGG","",100,0,4);
+
+   TH1F* pT1_s = new TH1F("pT1_s","",100,0,10);
+   TH1F* pT2_s = new TH1F("pT2_s","",100,0,10);
+   TH1F* mGG_s = new TH1F("mGG_s","",100,0,2000);
+   TH1F* dPhiGG_s = new TH1F("dPhiGG_s","",100,0,4);
+
    TH1F* nPhoton_prompt = new TH1F("nPhoton_prompt","",10,0,10);
    TH1F* nPhoton_hard = new TH1F("nPhoton_hard","",10,0,10);
 
@@ -2618,13 +2642,21 @@ public :
    TH1F* nHadron_prompt = new TH1F("nHadron_prompt","",15,0,15);
    TH1F* nHadron_hard = new TH1F("nHadron_hard","",15,0,15);
 
+   TH1F* nHard = new TH1F("nHard","",20,0,20);
+
+   TH1F* nPromptPhoton_matchedToHard = new TH1F("nPromptPhoton_matchedToHard","",3,0,3);
+   TH2F* diffPt_diffDr = new TH2F("diffPt_diffDr","",10,0,1,10,0,1);
+   TH1F* promptPhoton_motherID_0 = new TH1F("promptPhoton_motherID_0","", 22,0,22);
+   TH1F* promptPhoton_motherID_1 = new TH1F("promptPhoton_motherID_1","", 22,0,22);
+
    TH1F* pTPhoton_hard = new TH1F("pTPhoton_hard","",100,0,200);
    TH1F* etaPhoton_hard = new TH1F("etaPhoton_hard","",100,-3.2,3.2);
    TH1F* phiPhoton_hard = new TH1F("phiPhoton_hard","",50,-3.2,3.2);
-   TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,100);
+   TH1F* isoPhoton_hard = new TH1F("isoPhoton_hard","",100,0,1);
    TH1F* minDrPhoton_hard = new TH1F("minDrPhoton_hard","",100,0,5);
+   TH1F* minDrPhoton_hard_sel = new TH1F("minDrPhoton_hard_sel","",100,0,5);
    TH1F* minDrPhoton_passFrix_hard = new TH1F("minDrPhoton_passFrix_hard","",100,0,5);
-   TH1F* isoPhoton_passFrix_hard = new TH1F("isoPhoton_passFrix_hard","",100,0,10);
+   TH1F* isoPhoton_passFrix_hard = new TH1F("isoPhoton_passFrix_hard","",100,0,1);
 
    TH1F* minDrPhoton_hard_u_notFromW = new TH1F("minDrPhoton_hard_u_notFromW","",100,0,5);
    TH1F* minDrPhoton_hard_d_notFromW = new TH1F("minDrPhoton_hard_d_notFromW","",100,0,5);
@@ -2658,14 +2690,33 @@ public :
    TH1F* minDrPhoton_prompt_b_fromW = new TH1F("minDrPhoton_prompt_b_fromW","",100,0,5);
    TH1F* minDrPhoton_prompt_g_fromW = new TH1F("minDrPhoton_prompt_g_fromW","",100,0,5);
 
+   TH1F* minDrPhoton_hard_e_notFromW = new TH1F("minDrPhoton_hard_e_notFromW","",100,0,5);
+   TH1F* minDrPhoton_hard_mu_notFromW = new TH1F("minDrPhoton_hard_mu_notFromW","",100,0,5);
+   TH1F* minDrPhoton_hard_tau_notFromW = new TH1F("minDrPhoton_hard_tau_notFromW","",100,0,5);
+   TH1F* minDrPhoton_hard_e_fromW = new TH1F("minDrPhoton_hard_e_fromW","",100,0,5);
+   TH1F* minDrPhoton_hard_mu_fromW = new TH1F("minDrPhoton_hard_mu_fromW","",100,0,5);
+   TH1F* minDrPhoton_hard_tau_fromW = new TH1F("minDrPhoton_hard_tau_fromW","",100,0,5);
+
+   TH1F* minDrPhoton_prompt_e_notFromW = new TH1F("minDrPhoton_prompt_e_notFromW","",100,0,5);
+   TH1F* minDrPhoton_prompt_mu_notFromW = new TH1F("minDrPhoton_prompt_mu_notFromW","",100,0,5);
+   TH1F* minDrPhoton_prompt_tau_notFromW = new TH1F("minDrPhoton_prompt_tau_notFromW","",100,0,5);
+   TH1F* minDrPhoton_prompt_e_fromW = new TH1F("minDrPhoton_prompt_e_fromW","",100,0,5);
+   TH1F* minDrPhoton_prompt_mu_fromW = new TH1F("minDrPhoton_prompt_mu_fromW","",100,0,5);
+   TH1F* minDrPhoton_prompt_tau_fromW = new TH1F("minDrPhoton_prompt_tau_fromW","",100,0,5);
+
+   TH1F* minDrPhoton_hard_p = new TH1F("minDrPhoton_hard_p","",100,0,5);
+   TH1F* minDrPhoton_prompt_p = new TH1F("minDrPhoton_prompt_p","",100,0,5);
+
+
 
    TH1F* pTPhoton_prompt = new TH1F("pTPhoton_prompt","",100,0,200);
    TH1F* etaPhoton_prompt = new TH1F("etaPhoton_prompt","",100,-3.2,3.2);
    TH1F* phiPhoton_prompt = new TH1F("phiPhoton_prompt","",100,-3.2,3.2);
-   TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,100);
+   TH1F* isoPhoton_prompt = new TH1F("isoPhoton_prompt","",100,0,1);
    TH1F* minDrPhoton_prompt = new TH1F("minDrPhoton_prompt","",100,0,5);
+   TH1F* minDrPhoton_prompt_sel = new TH1F("minDrPhoton_prompt_sel","",100,0,5);
    TH1F* minDrPhoton_passFrix_prompt = new TH1F("minDrPhoton_passFrix_prompt","",100,0,5);
-   TH1F* isoPhoton_passFrix_prompt = new TH1F("isoPhoton_passFrix_prompt","",100,0,10);
+   TH1F* isoPhoton_passFrix_prompt = new TH1F("isoPhoton_passFrix_prompt","",100,0,1);
 
    TH2F* nPrompt_nPromptNotHard = new TH2F("nPrompt_nPromptNotHard","",10,0,10,10,0,10);
    TH2F* nHardLep_nHardHad = new TH2F("nHardLep_nHardHad","",10,0,10,10,5,15);
@@ -2678,6 +2729,12 @@ public :
 
    TH1F* dR_twoHardPhoton = new TH1F("dR_twoHardPhoton","",100,0,5);
    TH1F* dR_hard_prompt_photon = new TH1F("dR_hard_prompt_photon","",100,0,5);
+
+   TH2F* momID_momMomID_h_ttgg = new TH2F("momID_momMomID_h_ttgg","",25,0,25,25,0,25);
+   TH2F* momID_momMomID_h_ttg = new TH2F("momID_momMomID_h_ttg","",25,0,25,25,0,25);
+   TH2F* momID_momMomID_p_ttg = new TH2F("momID_momMomID_p_ttg","",25,0,25,25,0,25);
+
+   TH2F* nearID_nearMomID = new TH2F("nearID_nearMomID","",25,0,25,25,0,25);
 
    ClassDef(cms4GenSelector,0);
 

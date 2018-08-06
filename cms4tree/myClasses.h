@@ -8,11 +8,14 @@ class GenParticle
 public:
 
   GenParticle();
-  GenParticle(double px, double py, double pz, double e, int id, int id_mom, int status, bool isPrompt, bool isHard);
+  GenParticle(double px, double py, double pz, double e, int id, int id_mom, int id_simplemom, int idx_mom, int idx_simplemom, int status, bool isPrompt, bool isHard);
 
   TLorentzVector P4() {return p4_;}
   int ID() {return id_;}
   int ID_mom() {return id_mom_;}
+  int ID_simpleMom() {return id_simplemom_;}
+  int IDX_mom() {return idx_mom_;}
+  int IDX_simpleMom() {return idx_simplemom_;}
   int Status() {return status_;}
   bool IsPrompt() {return isPrompt_;}
   bool IsHard() {return isHard_;}
@@ -40,6 +43,9 @@ private:
   TLorentzVector p4_;
   int id_;
   int id_mom_;
+  int id_simplemom_;
+  int idx_mom_;
+  int idx_simplemom_;
   int status_;
   bool isPrompt_;
   bool isHard_;
@@ -56,10 +62,12 @@ private:
 
 GenParticle::GenParticle() {}
 
-GenParticle::GenParticle(double px, double py, double pz, double e, int id, int id_mom, int status, bool isPrompt, bool isHard)
+GenParticle::GenParticle(double px, double py, double pz, double e, int id, int id_mom, int id_simplemom, int idx_mom, int idx_simplemom, int status, bool isPrompt, bool isHard)
 {
 
- id_ = id; id_mom_ = id_mom; status_ = status;
+ id_ = id; id_mom_ = id_mom; id_simplemom_ = id_simplemom;
+ idx_mom_ = idx_mom, idx_simplemom_ = idx_simplemom;
+ status_ = status;
  isPrompt_ = isPrompt; isHard_ = isHard;
 
  p4_.SetPxPyPzE(px,py,pz,e);
